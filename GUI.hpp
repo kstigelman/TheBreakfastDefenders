@@ -2,10 +2,13 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "Animator.hpp"
 
 class GUI
 {
 	protected:
+		Animator animator;
+	private:
 		sf::Font* font;
 		sf::Text* text;
 
@@ -29,12 +32,15 @@ class GUI
 		}
 		GUI(std::string filepath, int frames)
 		{
+			
 			texture.loadFromFile(filepath);
 			sprite.setTexture(texture);
 			//font->loadFromFile("index/assets/fonts/ka1.ttf");
 			//text->setFont(*font);
 			nFrames = frames;
 			frameSize = sf::Vector2i(texture.getSize().x / frames, texture.getSize().y);
+
+			animator = Animator (&texture, &sprite, nFrames, -1);
 			spriteSource.left = 0;
 			spriteSource.top = 0;
 			spriteSource.width = frameSize.x;
@@ -46,7 +52,7 @@ class GUI
 
 			drawText = false;
 		}
-		virtual ~GUI()
+		~GUI()
 		{
 			text = nullptr;
 			font = nullptr;
@@ -95,6 +101,9 @@ class GUI
 			}
 			sprite.setTextureRect(spriteSource);
 
+		}
+		Animator& GetAnimator () {
+			return animator;
 		}
 
 

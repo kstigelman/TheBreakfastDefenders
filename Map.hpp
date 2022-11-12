@@ -8,7 +8,7 @@ class Map
 		sf::RectangleShape background;
 		
 	public:
-		Map(sf::Vector2i size)
+		Map(sf::Vector2i size = sf::Vector2i (360, 480))
 		{
 			background.setSize(sf::Vector2f(size.x, size.x));
 			background.setPosition(0, size.y - size.x);
@@ -18,7 +18,7 @@ class Map
 		{
 			
 		}
-		void Draw(sf::RenderWindow &window)
+		void Draw(sf::RenderWindow& window)
 		{
 			window.draw(background);
 		}

@@ -52,50 +52,55 @@ class HealthBar : public GUI
 			outline.setSize(bar.getSize());
 			
 		}
-		void SetColor (sf::Color color)
+		virtual void SetColor (sf::Color color)
 		{
 			bar.setFillColor (color);
 		}
-		int GetHealth()
-		{
+		/*
+		 * Returns the amount of health the entity has left
+		 */
+		int GetHealth () {
 			return health;
-
 		}
-		void Update(float dt, sf::Vector2f position)
+		void SetHealth (int amount) {
+			if (amount >= maxHealth)
+				amount = maxHealth;
+			health = amount;
+		}
+		virtual void Update(float dt, sf::Vector2f position)
 		{
 			SetPosition(sf::Vector2f(position.x - 8, position.y - 25));
 		}
-		void UpdateHealth ()
+		virtual void UpdateHealth ()
 		{
 			bar.setSize(sf::Vector2f(outline.getSize().x * health / maxHealth, bar.getSize().y));
 		}
 		
-		void SetPosition(sf::Vector2f position)
+		virtual void SetPosition(sf::Vector2f position)
 		{
 			outline.setPosition(position);
 			bar.setPosition(position);
 		}
-		void Draw(sf::RenderWindow& window)
+		virtual void Draw(sf::RenderWindow& window)
 		{
 			window.draw(outline);
 			window.draw(bar);
 		}
-		sf::Vector2f GetPosition()
+		virtual sf::Vector2f GetPosition()
 		{
 			return bar.getPosition();
 		}
-		void Move(sf::Vector2f movement)
+		virtual void Move(sf::Vector2f movement)
 		{
 			outline.move(movement);
 			bar.move(movement);
 		}
-		void Heal(int amount)
+		virtual void Heal(int amount)
 		{
-			if (health <= 100)
-				health += amount; 
+			health += amount; 
 				
-			if (health > 100)
-				health = 100;
+			if (health > maxHealth)
+				health = maxHealth;
 			
 			UpdateHealth ();
 			
@@ -104,7 +109,7 @@ class HealthBar : public GUI
 		{
 			//health -= strength + opposingStat;
 			health -= strength;
-			std::cout << std::to_string(health) << std::endl;
+
 			
 			if (health <= 0)
 			{
@@ -116,16 +121,17 @@ class HealthBar : public GUI
 				When I removed Draw from Battle, this gives an error
 				Edit: You hecking idiot, you forgot to uncomment the next line and was wondering why it wasnt working
 			*/
+			std::cout << std::to_string (health) << std::endl;
 			UpdateHealth ();
 			
 		}
-		bool KnockedOut()
-		{
+		bool KnockedOut() {
 			return healthDepleted;
 		}
-		std::string GetOwner()
-		{
+		std::string GetOwner() {
 			return owner;
 		}
-
+		int GetMaxHealth() {
+			return maxHealth;
+		}
 };

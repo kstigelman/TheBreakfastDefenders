@@ -4,16 +4,16 @@
 #include <SFML/Graphics.hpp>
 #include "Entity.hpp"
 
-class Shot : public Entity
+class Shot
 {
 	protected:
 		int direction;
-		
+		int movementSpeed;
 		sf::CircleShape bullet;
 	public:
 		Shot(sf::Vector2f position, int m_direction)
 		{
-				animator = nullptr;
+				//animator = nullptr;
 				
 				direction = m_direction;
 				movementSpeed = 250;
@@ -24,7 +24,7 @@ class Shot : public Entity
 		}
 		~Shot()
 		{
-			animator = nullptr;
+			//animator = nullptr;
 			
 		}
 		
@@ -48,7 +48,7 @@ class Shot : public Entity
 				
 			}
 		}
-		void Draw(sf::RenderWindow &window)
+		void Draw(sf::RenderWindow& window)
 		{
 			window.draw(bullet);
 		}
@@ -60,15 +60,9 @@ class Shot : public Entity
 		{
 			
 			if(target->GetBounds().contains(GetPosition()))
-			{
-				//delete target;
 				return true;
-			}
-			else
-			{
-				//delete target;
-				return false;
-			}
+			return false;
+			
 			/*if(target->sprite.getGlobalBounds().contains(bullet.getGlobalBounds()))
 			{
 				delete target; // Remove this if Segmentation fault
