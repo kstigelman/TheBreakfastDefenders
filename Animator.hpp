@@ -21,6 +21,10 @@ public:
 	sf::Sprite* sprite;
 	Animator () {
 	}
+	Animator (const Animator& a)
+	{
+		*this = a;
+	}
 	Animator (sf::Texture m_Texture, int frames, int fr) {
 		texture = new sf::Texture ();
 		*texture = m_Texture;
@@ -66,8 +70,10 @@ public:
 	}
 	~Animator()
 	{
-		texture = nullptr;
-		sprite = nullptr;
+		Destruct ();
+	}
+	void Destruct () 
+	{
 		delete texture;
 		delete sprite;
 	}
@@ -147,5 +153,22 @@ public:
 	void SetSpritePos (sf::Vector2f pos) {
 		sprite->setPosition (pos);
 	}
-	
+	Animator& operator=(const Animator& rhs)
+	{
+		if (this == &rhs)
+			return *this;
+		updateFrame = rhs.updateFrame;
+		framerate = rhs.framerate;
+		totalFrames = rhs.totalFrames;
+		frameBox = rhs.frameBox;
+		frameClock = rhs.frameClock;
+		isActive = rhs.isActive;
+
+
+		Destruct ();
+		texture = rhs.texture;
+		sprite = rhs.sprite;
+
+		return *this;
+	}
 };

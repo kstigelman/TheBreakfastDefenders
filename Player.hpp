@@ -53,7 +53,7 @@ class Player : public Entity
 		}*/
 		Player(int id = 1)
 		{
-			
+			Entity::SetName ("Player");
 			hud = PlayerHUD (&healthbar);
 			playerID = id;
 			
@@ -69,6 +69,10 @@ class Player : public Entity
 			
 			
 		}
+		Player (const Player& p) 
+		{
+			*this = p;
+		}
 		~Player()
 		{
 			//gui = nullptr;
@@ -80,6 +84,7 @@ class Player : public Entity
 			//hitbox.setPosition(sprite.getPosition());
 			//bottom = sf::Vector2f(hitbox.getPosition().x + 16, hitbox.getPosition().y + 64);
 			
+
 			if(sprite.getPosition().x >= 360 - 8)
 				canMoveRight = false;
 			else
@@ -101,6 +106,8 @@ class Player : public Entity
 				canMoveDown = true;
 
 			Movement(dt);
+			SetColliderPosition (GetPosition ());
+
 			Shoot(dt);
 		}
 		void Draw(sf::RenderWindow& window)
@@ -163,7 +170,7 @@ class Player : public Entity
 						sprite.move (sf::Vector2f (100 * dt, 0));
 					break;
 				case 5:
-					TakeDamage (sf::Vector2f (100 * dt, 100 * dt), 1);
+					Damage (sf::Vector2f (100 * dt, 100 * dt), 1);
 					break;
 				default:
 					break;
@@ -175,6 +182,10 @@ class Player : public Entity
 		sf::Vector2f GetPosition()
 		{
 			return sprite.getPosition();
+		}
+		sf::Vector2f GetCopyPosition ()
+		{
+			return sprite.getPosition ();
 		}
 		int ShootDirection()
 		{
@@ -215,7 +226,7 @@ class Player : public Entity
 			}
 			
 		}
-		void TakeDamage(sf::Vector2f source, int amount)
+		void Damage(sf::Vector2f source, int amount)
 		{
 			if (CanTakeDamage ())
 			{
@@ -260,6 +271,32 @@ class Player : public Entity
 		bool CanShoot()
 		{
 			return shotTimer.getElapsedTime ().asSeconds () >= shotCooldown;
+		}
+		Player& operator=(const Player& rhs)
+		{
+			if (this == &rhs)
+				return *this;
+
+			playerID = rhs.playerID;
+			animator = rhs.animator;
+			healthbar = rhs.healthbar;
+
+			hud = rhs.hud;
+
+			shotTimer = rhs.shotTimer;
+			dmgTimer = rhs.dmgTimer;
+
+			shotCooldown = rhs.shotCooldown;
+			invincibilityCooldown = rhs.invincibilityCooldown;
+			kbMult = rhs.kbMult;
+		
+			bullets = rhs.bullets;
+			canMoveUp = rhs.canMoveUp;
+			canMoveDown = rhs.canMoveDown;
+			canMoveLeft = rhs.canMoveLeft;
+			canMoveRight = rhs.canMoveRight;
+
+			return *this;
 		}
 		
 

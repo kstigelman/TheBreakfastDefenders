@@ -52,6 +52,18 @@ class HealthBar : public GUI
 			outline.setSize(bar.getSize());
 			
 		}
+		HealthBar (const HealthBar& h)
+		{
+			*this = h;
+		}
+		~HealthBar () 
+		{
+			Destruct ();
+		}
+		virtual void Destruct ()
+		{
+			
+		}
 		virtual void SetColor (sf::Color color)
 		{
 			bar.setFillColor (color);
@@ -133,5 +145,9 @@ class HealthBar : public GUI
 		}
 		int GetMaxHealth() {
 			return maxHealth;
+		}
+		HealthBar& operator= (const HealthBar& rhs)
+		{
+
 		}
 };

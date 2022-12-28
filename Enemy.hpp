@@ -9,14 +9,15 @@
 class Enemy : public Entity
 {
 	protected:
-		sf::Vertex line[2];
-		sf::Vector2f startingPositions[4];
 		const float rad = 180 / 3.14;
 		HealthBar* healthBar;
 		Animator animator;
+		Entity* target;
+		
 	public:
 		Enemy()
 		{
+			
 			movementSpeed = 20;
 			
 			sprite.setPosition(sf::Vector2f(200, 100));
@@ -26,23 +27,19 @@ class Enemy : public Entity
 			sprite.setScale(2.f, 2.f);
 			animator = Animator(&texture, &sprite, 2, 2);
 			//healthBar = new HealthBar(5, sf::Vector2f(), sf::Color::Red);
-			sprite.setOrigin(animator.GetFrameDim().x / 2, animator.GetFrameDim().y/ 2);
-			
-			
-			
-			startingPositions[0] = sf::Vector2f(0, 450);
-			startingPositions[1] = sf::Vector2f(600, 450);
-			startingPositions[2] = sf::Vector2f(300, 0);
-			startingPositions[3] = sf::Vector2f(300, 600);
-			
+			sprite.setOrigin(animator.GetFrameDim().x / 2, animator.GetFrameDim().y/ 2);			
 			
 		}
 	    ~Enemy()
 		{
-			healthBar = nullptr;
-			delete healthBar;
+			Destruct ();
 		}
-		virtual void Damage(int amount)
+		virtual void Destruct () {
+			delete healthBar;
+			delete target;
+			//Entity::Destruct (); I dont think this is necessary
+		}
+		virtual void Damage(sf::Vector2f source, int amount)
 		{
 			healthBar->TakeDamage(1);
 		}
@@ -55,15 +52,24 @@ class Enemy : public Entity
 				healthBar->Draw(window);
 			}
 		}
-		void Pathfinding(sf::Vector2f targetPosition, float dt)
+		void SetTarget (Entity* targetCollider)
 		{
-			
-			float dx = targetPosition.x - sprite.getPosition().x;
-			float dy = targetPosition.y - sprite.getPosition().y;
+			target = targetCollider;
+			//target = targetPosition;
+		}
+		std::string GetTarget () {
+			return GetName () + " is targetting " + target->GetName () + " at position: " + target->PrintPosition ();
+		}
+		void Pathfinding (float dt)
+		{
+			sf::Vector2f targetPos = target->GetPosition ();
+
+			float dx = targetPos.x - sprite.getPosition().x;
+			float dy = targetPos.y - sprite.getPosition().y;
 				
 			float a = std::atan2(dy, dx);
 			
-			velocity = sf::Vector2f( std::cos(a) * dt * movementSpeed, std::sin(a) * dt * movementSpeed);
+			velocity = sf::Vector2f( std::cos(a) * movementSpeed, std::sin(a) * movementSpeed);
 			/*
 			if(dx > 0 && dy > 0)
 			{
@@ -89,12 +95,13 @@ class Enemy : public Entity
 			
 			//velocity = sf::Vector2f(dx * dt / movementSpeed, dy * dt / movementSpeed);
 		}
-		virtual void Update(float dt, sf::Vector2f target)
+		virtual void Update (float dt)
 		{
-			if(isActive)
+			
+			if (isActive)
 			{
-				Pathfinding(target, dt);
-				Move(velocity);
+				Pathfinding (dt);
+				Entity::Update (dt);
 				healthBar->Update(dt, GetPosition());
 				
 				if(healthBar->KnockedOut())
@@ -103,5 +110,17 @@ class Enemy : public Entity
 				}
 			}
 		}
-	
+		
+		Enemy& operator=(const Enemy& rhs) {
+			if (this == &rhs)
+				return *this;
+
+			Destruct ();
+			//Entity::Destruct () might be necessary here instead.
+			healthBar = rhs.healthBar;
+			target = rhs.target;
+			animator = rhs.animator;
+
+			return *this;
+		}
 };

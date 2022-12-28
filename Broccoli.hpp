@@ -3,14 +3,15 @@
 #include <SFML/Graphics.hpp>
 #include "Enemy.hpp"
 
+
 class Broccoli : public Enemy
 {
 	protected:
 	
 	public:
-		Broccoli()
+		Broccoli(int id = 0)
 		{
-			
+			SetName ("Broccoli" + std::to_string (id));
 			SetPosition(GetPosition());
 			movementSpeed = 20.f;
 			
@@ -20,7 +21,7 @@ class Broccoli : public Enemy
 		}
 		~Broccoli()
 		{
-			healthBar = nullptr;
+		
 		
 		}
 	

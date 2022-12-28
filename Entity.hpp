@@ -10,6 +10,8 @@ class Entity
 		sf::Texture texture;
 		//Animator animator;
 		Collider collider;
+	private:
+		std::string name;
 	public:
 		float health;
 		bool dead;
@@ -21,10 +23,13 @@ class Entity
 		sf::Vector2f velocity;
 		sf::Vector2f externalVelocity;
 		
+		bool canDraw;
 		bool isActive;
+
 		Entity ()
 		{
 			//animator = Animator (texture, 1, 2);
+			name = "nullentity";
 			isActive = true;
 			health = 3;
 			dead = false;
@@ -37,10 +42,32 @@ class Entity
 			externalVelocity = sf::Vector2f(0, 0);
 			
 		}
+		Entity (const Entity& e) 
+		{
+			*this = e;
+		}
 		~Entity()
 		{
+			Destruct ();
 		}
-		
+		virtual void Init ()
+		{
+
+		}
+		virtual void Destruct ()
+		{
+
+		}
+		void SetName (std::string newName) {
+			name = newName;
+		}
+		std::string GetName () {
+			return name;
+		}
+		virtual void Update (float dt) {
+			SetColliderPosition (sprite.getPosition ());
+			Move (sf::Vector2f (velocity.x * dt, velocity.y * dt));
+		}
 		virtual void Draw(sf::RenderWindow& window)
 		{
 			window.draw(sprite);
@@ -66,5 +93,35 @@ class Entity
 		Collider& GetCollider () {
 			return collider;
 		}
+		void SetColliderPosition (sf::Vector2f loc) {
+			collider.SetPosition (loc);
+		}
+		std::string PrintPosition () {
+			return "(" + std::to_string (GetPosition ().x) + ", " + std::to_string (GetPosition ().y) + ")";
+		}
 			
+		virtual void Damage (sf::Vector2f source, int amount)
+		{
+
+		}
+		Entity& operator=(const Entity& e) 
+		{
+			if (this == &e)
+				return *this;
+
+			texture = e.texture;
+			collider = e.collider;
+			name = e.name;
+			health = e.health;
+			dead = e.dead;
+			movementSpeed = e.movementSpeed;
+			maxSpeed = e.maxSpeed;
+			sprite = e.sprite;
+			velocity = e.velocity;
+			externalVelocity = e.externalVelocity;
+			canDraw = e.canDraw;
+			isActive = e.isActive;
+			
+			return *this;
+		}
 };
